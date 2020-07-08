@@ -2,7 +2,7 @@
 session_start();
 include('includes/config.php');
 error_reporting(0);
-if(strlen($_SESSION['login'])==0)
+if(strlen($_SESSION['alogin'])==0)
     {   
 header('location:index.php');
 }
@@ -11,24 +11,25 @@ if(isset($_POST['change']))
   {
 $password=md5($_POST['password']);
 $newpassword=md5($_POST['newpassword']);
-$email=$_SESSION['login'];
-  $sql ="SELECT Password FROM tblstudents WHERE S_id=:email and Password=:password";
+$username=$_SESSION['alogin'];
+echo($username);
+  $sql ="SELECT Password FROM admin where UserName=:username and Password=:password";
 $query= $dbh -> prepare($sql);
-$query-> bindParam(':email', $email, PDO::PARAM_STR);
+$query-> bindParam(':username', $username, PDO::PARAM_STR);
 $query-> bindParam(':password', $password, PDO::PARAM_STR);
 $query-> execute();
 $results = $query -> fetchAll(PDO::FETCH_OBJ);
 if($query -> rowCount() > 0)
 {
-$con="UPDATE `tblstudents` SET `Password`=:newpassword WHERE S_id=:email";
+$con="UPDATE `admin` SET `Password`=:newpassword WHERE UserName=:username";
 $chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':email', $email, PDO::PARAM_STR);
+$chngpwd1-> bindParam(':username', $username, PDO::PARAM_STR);
 $chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
 $chngpwd1->execute();
-$msg="Your password has been succesfully changed.";
+$msg="Your Password succesfully changed";
 }
 else {
-$error="Your current password is wrong.";  
+$error="Your current password is wrong";  
 }
 }
 
@@ -40,7 +41,7 @@ $error="Your current password is wrong.";
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Sapthagiri College of Engg. CSE Library</title>
+    <title>Sapthagiri College of Engg. CSE Library | Password Recovery</title>
     <!-- BOOTSTRAP CORE STYLE  -->
     <link href="assets/css/bootstrap.css" rel="stylesheet" />
     <!-- FONT AWESOME STYLE  -->
@@ -73,7 +74,7 @@ function valid()
 {
 if(document.chngpwd.newpassword.value!= document.chngpwd.confirmpassword.value)
 {
-alert("New Password and Confirm Password Field do not match.");
+alert("New Password and Confirm Password Field do not match  !!");
 document.chngpwd.confirmpassword.focus();
 return false;
 }
@@ -89,7 +90,7 @@ return true;
 <div class="container">
 <div class="row pad-botm">
 <div class="col-md-12">
-<h4 class="header-line">User Change Password</h4>
+<h4 class="header-line">Admin Change Password </h4>
 </div>
 </div>
  <?php if($error){?><div class="errorWrap"><strong>ERROR</strong>:<?php echo htmlentities($error); ?> </div><?php } 
@@ -110,7 +111,7 @@ Change Password
 </div>
 
 <div class="form-group">
-<label>New Password</label>
+<label>Enter Password</label>
 <input class="form-control" type="password" name="newpassword" autocomplete="off" required  />
 </div>
 
